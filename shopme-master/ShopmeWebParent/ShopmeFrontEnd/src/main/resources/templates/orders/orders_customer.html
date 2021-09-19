@@ -6,7 +6,7 @@
 	<div th:replace="navigation :: header_menu"></div>
 	<div th:replace="navigation :: search_nav"></div>
 	<div>
-		<h2>My Orders</h2>	
+		<h2>Моите поръчки</h2>	
 	</div>
 		
 	<div>
@@ -14,7 +14,7 @@
 			<input type="hidden" name="sortField" th:value="${sortField}" />
 			<input type="hidden" name="sortDir" th:value="${sortDir}" />
 			
-			Filter:&nbsp;
+			Филтър:&nbsp;
 			<input type="search" name="orderKeyword" th:value="${orderKeyword}" class="form-control" required/>
 			&nbsp;&nbsp;
 			<button type="submit" class="btn btn-primary">
@@ -31,23 +31,88 @@
 		<table class="table table-bordered table-striped table-hover table-responsive-xl">
 			<thead class="thead-dark">
 				<tr>
-					<th th:replace="fragments :: column_link('id', 'ID', 'none')" />
-					<th th:replace="fragments :: column_link('orderTime', 'Order Time', 'none')" />
-					<th>Products</th>
-					<th th:replace="fragments :: column_link('total', 'Total', 'none')" />
-					<th th:replace="fragments :: column_link('status', 'Status', 'none')" />
+					<th>
+						<a class="text-white"
+						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
+						Номер
+						</a>								
+						<span th:if="${sortField == fieldName}"
+						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
+					</th>
+					<th>Продукт</th>
+					<th>
+						<a class="text-white"
+						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
+						Дата на поръчка
+						
+						</a>								
+						<span th:if="${sortField == fieldName}"
+						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
+					</th>
+					<th>
+						<a class="text-white"
+						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
+						Начална дата на наема
+						</a>								
+						<span th:if="${sortField == fieldName}"
+						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
+					</th>
+					<th>
+						<a class="text-white"
+						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
+						Дата на връщане
+						</a>								
+						<span th:if="${sortField == fieldName}"
+						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
+					</th>
+					<th>
+						<a class="text-white"
+						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
+						Дни под наем
+						</a>								
+						<span th:if="${sortField == fieldName}"
+						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
+					</th>
+					<th>
+						<a class="text-white"
+						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
+						Сума за плащне
+						</a>								
+						<span th:if="${sortField == fieldName}"
+						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
+					</th>
+					<th>
+						<a class="text-white"
+						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
+						Статус
+						</a>								
+						<span th:if="${sortField == fieldName}"
+						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
+					</th>
+					<th>
+						<a class="text-white"
+						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
+						Град
+						</a>								
+						<span th:if="${sortField == fieldName}"
+						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
+					</th>
 					<th></th>
 				</tr>								
 			</thead>
 			<tbody>
 				<tr th:each="order : ${listOrders}">
-					<td th:text="${order.id}">ID</td>
-					<td><div th:replace="fragments :: format_time(${order.orderTime})">Order Time</div></td>
+					<td th:text="${order.id}">Номер</td>
 					<td th:utext="${order.productNames}"></td>
+					<td><div th:replace="fragments :: format_time(${order.orderTime})">Дата на поръчка</div></td>
+					<td><div th:replace="fragments :: format_time(${order.startDay})">Начална дата на наема</div></td>
+					<td><div th:replace="fragments :: format_time(${order.endDay})">Дата на връщане</div></td>
+					<td><div>[[${order.rentedDays}]]</div></td>
 					<td>
-						<div>Total: [[${order.total}]]</div>
+						<div>[[${order.total}]] лв</div>
 					</td>
-					<td><span th:class="'textOrderStatus' + ${order.id}">[[${order.status}]]</span></td>
+					<td><div>[[${order.status}]]</div></td>
+					<td><div>[[${order.product.city.name}]]</div></td>
 					<td>
 						<a class="fas fa-file-alt fa-2x icon-green linkDetail" 
 							th:href="@{'/orders/detail/' + ${order.id}}" 
@@ -57,46 +122,8 @@
 			</tbody>
 		</table>
 	</div>
-
-	<div class="less-details p-2">
-	<th:block th:each="order : ${listOrders}">
-		<div class="row m-1">
-			<div class="card">
-				<div class="card-header">
-					<div class="row">
-						<div class="col">
-							<span>Order ID #[[${order.id}]]</span>						
-						</div>						
-						<div class="col">
-							<div class="float-right">
-								<a class="fas fa-file-alt fa-2x icon-green linkDetail" 
-									th:href="@{'/orders/detail/' + ${order.id}}"></a>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="card-body">
-					<div>
-						<span th:utext="${order.productNames}"></span>
-					</div>
-					<div class="row">
-						<div class="col">
-							<div>Total: [[${order.total}]]</div>	
-						</div>
-						<div class="col">
-							<span th:class="'textOrderStatus' + ${order.id}">[[${order.status}]]</span>
-						</div>			
-					</div>
-					<div><small><div th:replace="fragments :: format_time(${order.orderTime})"></div></small></div>
-				</div>
-			</div>
-		</div>	
-	</th:block>
-	</div>		
 	
 	<div th:replace="fragments :: pagination('/orders', 'orders')"></div>
-	
-	<div th:replace="orders/return_order_modal :: content"></div>
 		
 	<div class="modal fade" id="orderDetailsModal">
 	  <div class="modal-dialog modal-xl">

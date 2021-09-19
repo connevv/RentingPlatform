@@ -27,8 +27,9 @@ public class ShoppingCartRestController {
 			@PathVariable("startDay") String startDay, @PathVariable("endDay") String endDay, HttpServletRequest request) {
 		
 		try {
-			SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-mm-dd");
+			SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
 			Customer customer = getAuthenticatedCustomer(request);
+			Date test = myFormat.parse(startDay);
 			Integer updatedQuantity = cartService.addProduct(productId, customer, myFormat.parse(startDay), myFormat.parse(endDay));
 			
 			return updatedQuantity + " item of this product were added to your shopping cart.";

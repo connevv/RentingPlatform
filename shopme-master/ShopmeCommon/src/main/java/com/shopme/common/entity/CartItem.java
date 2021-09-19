@@ -65,8 +65,12 @@ public class CartItem extends IdBasedEntity {
 
 	@Transient
 	public long getRentedDays() {
-		long diff = startDate.getTime() - endDate.getTime();
+		long diff = endDate.getTime() - startDate.getTime(); 
 		long daysBetweenDates = (diff / (1000*60*60*24));
+		
+		if (daysBetweenDates == 0) {
+			daysBetweenDates += 1;
+		}
 		return daysBetweenDates;
 	}
 

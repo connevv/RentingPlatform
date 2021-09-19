@@ -47,7 +47,7 @@ public class CheckoutController {
 	@Autowired private SettingService settingService;
 	@Autowired private PayPalService paypalService;
 	
-	@GetMapping("/checkout")
+	/*@GetMapping("/checkout")
 	public String showCheckoutPage(Model model, HttpServletRequest request) {
 		Customer customer = getAuthenticatedCustomer(request);
 		
@@ -68,8 +68,8 @@ public class CheckoutController {
 			return "redirect:/cart";
 		}
 		
-		List<CartItem> cartItems = cartService.listCartItems(customer);
-		//CheckoutInfo checkoutInfo = checkoutService.prepareCheckout(cartItems, shippingRate);
+		CartItem cartItems = cartService.listCartItem(customer);
+		CheckoutInfo checkoutInfo = checkoutService.prepareCheckout(cartItems, shippingRate);
 		
 		//String currencyCode = settingService.getCurrencyCode();
 		String currencyCode = "EUR";
@@ -114,7 +114,7 @@ public class CheckoutController {
 		
 		Order createdOrder = orderService.createOrder(customer, defaultAddress, cartItems, paymentMethod);
 		cartService.deleteByCustomer(customer);
-		sendOrderConfirmationEmail(request, createdOrder);*/
+		sendOrderConfirmationEmail(request, createdOrder);
 		
 		return "checkout/order_completed";
 	}
@@ -176,5 +176,5 @@ public class CheckoutController {
 		model.addAttribute("message", message);
 		
 		return "message";
-	}
+	}*/
 }

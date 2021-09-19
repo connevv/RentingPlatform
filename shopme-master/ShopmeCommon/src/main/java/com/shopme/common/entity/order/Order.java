@@ -173,5 +173,10 @@ public class Order extends IdBasedEntity {
 			}
 		
 		return false;
-	}	
+	}
+	
+	@Transient
+	public String getProductNames() {
+		return "<ul><li>" + product.getShortName() + "</li></ul>";
+	}
 }

@@ -47,6 +47,14 @@ public class Customer extends AbstractAddress {
 			inverseJoinColumns = @JoinColumn(name = "product_id")
 			)
 	private Set<Product> products = new HashSet<>();
+	
+	@ManyToMany
+	@JoinTable(
+			name = "customers_user_votes",
+			joinColumns = @JoinColumn(name = "customer_id"),
+			inverseJoinColumns = @JoinColumn(name = "user_id")
+			)
+	private Set<User> users = new HashSet<>();
 
 	public Customer() {
 	}
@@ -121,5 +129,13 @@ public class Customer extends AbstractAddress {
 
 	public void setProducts(Set<Product> products) {
 		this.products = products;
+	}
+
+	public Set<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Set<User> users) {
+		this.users = users;
 	}
 }

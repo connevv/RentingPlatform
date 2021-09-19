@@ -11,7 +11,7 @@ import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.product.Product;
 
 public interface CartItemRepository extends CrudRepository<CartItem, Integer> {
-	public List<CartItem> findByCustomer(Customer customer);
+	public CartItem findByCustomer(Customer customer);
 	
 	public CartItem findByCustomerAndProduct(Customer customer, Product product);
 	

@@ -23,22 +23,15 @@ public class OrderService {
 	
 	@Autowired private OrderRepository repo;
 	
-	public Order createOrder(Customer customer, CartItem cartItem,
-			PaymentMethod paymentMethod) {
+	public Order createOrder(Customer customer, CartItem cartItem) {
 		Order newOrder = new Order();
 		newOrder.setOrderTime(new Date());
-		
-		/*if (paymentMethod.equals(PaymentMethod.PAYPAL)) {
-			newOrder.setStatus(OrderStatus.PAID);
-		} else {
-			newOrder.setStatus(OrderStatus.NEW);
-		}*/
-		
 		newOrder.setCustomer(customer);
 		newOrder.setTotal(cartItem.getSubtotal());
 		newOrder.setStartDay(cartItem.getStartDate());
 		newOrder.setEndDay(cartItem.getEndDate());
 		newOrder.setStatus(OrderStatus.PENDING);
+		newOrder.setRentedDays((int)cartItem.getRentedDays());
 		Product product = cartItem.getProduct();
 		newOrder.setProduct(product);
 		
@@ -52,9 +45,9 @@ public class OrderService {
 		
 		Pageable pageable = PageRequest.of(pageNum - 1, ORDERS_PER_PAGE, sort);
 		
-		/*if (keyword != null) {
+		if (keyword != null) {
 			return repo.findAll(keyword, customer.getId(), pageable);
-		}*/
+		}
 		
 		return repo.findAll(customer.getId(), pageable);
 	}

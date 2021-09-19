@@ -15,17 +15,17 @@
 <div th:fragment="product_price" th:remove="tag">
 	<th:block th:if="${product.discountPercent &lt;= 0}">
 		<div>
-			<span>$[[${product.price}]]</span>
+			<span>[[${product.price}]] лв</b></span>
 		</div>
 	</th:block>
 	<th:block th:if="${product.discountPercent > 0}">
-		<span style="font-size: lagrer; color:darkred">$ [[${product.discountPrice}]]</span>
+		<span style="font-size: lagrer; color:darkred">[[${product.discountPrice}]] лв</span>
 		<del>
-			<span>$ [[${product.price}]]</span>
+			<span>[[${product.price}]] лв</span>
 		</del>
 	</th:block>
 	<div>
-		<span>Град: [[${product.city.name}]]</span>
+		<span>Град: <b> [[${product.city.name}]]</b></span>
 	</div>
 </div>
 

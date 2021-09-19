@@ -106,7 +106,7 @@
 </div>
 		
 <div th:fragment="format_time(dateTime)" th:remove="tag">
-	<span th:text="${#dates.format(dateTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+	<span th:text="${#dates.format(dateTime, 'yyyy-MM-dd')}"></span>
 </div>	
 
 <div th:fragment="currency_input(amount)" th:remove="tag">
@@ -178,6 +178,19 @@
 			th:href="@{${entityUrl}}"
 			th:title="'Add positive review'"
 			>See product comments</a>
+</div>
+
+<div th:fragment="see_product_renter_info(entityUrl, renterName)" th:remove="tag">
+		<div>
+			<div>
+				<h4>Наемател: </h4>
+			</div>
+			<a class="fas fa-male fa-2x mt-10"
+				th:href="@{${entityUrl}}"
+				th:title="'Add positive review'"
+				>[[${renterName}]]</a>
+		</div>
+		
 </div>
 	
 </body>

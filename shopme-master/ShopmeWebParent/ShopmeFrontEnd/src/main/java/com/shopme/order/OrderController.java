@@ -64,7 +64,7 @@ public class OrderController {
 			@PathVariable(name = "id") Integer id, HttpServletRequest request) {
 		Customer customer = getAuthenticatedCustomer(request);
 		
-		Order order = orderService.getOrder(id, customer);		
+		Order order = orderService.getOrder(id, customer);	
 		model.addAttribute("order", order);
 		
 		return "orders/order_details_modal";

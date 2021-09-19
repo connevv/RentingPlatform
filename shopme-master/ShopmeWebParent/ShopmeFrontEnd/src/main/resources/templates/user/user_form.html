@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head(${pageTitle}, 'none')" />
+<body>
+<div class="container-fluid">
+	<div th:replace="navigation :: header_menu"></div>
+
+	<div>
+		<h2 class="text-center">[[${user.fullName}]]</h2>	
+	</div>
+	
+	<form style="max-width: 500px; margin: 0 auto"
+		enctype="multipart/form-data"
+		th:object="${user}" onsubmit="">
+		<input type="hidden" th:field="*{id}" />
+	<div class="border border-secondary rounded p-3">
+		<div class="form-group row">
+			<div class="col-sm-8 col-form-label">
+				<input type="hidden" th:field="*{photos}" />
+				<img id="thumbnail" alt="Photos preview" th:src="@{${user.photosImagePath}}"
+					class="img-fluid" />
+			</div>
+		</div>	
+	
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">Електронна поща:</label>
+			<div class="col-sm-8">
+				<input type="email" class="form-control" th:field="*{email}" readonly  />
+			</div>
+		</div>
+		
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">Телефоннен номер:</label>
+			<div class="col-sm-8">
+				<input type="text" class="form-control" th:field="*{phoneNumber}" readonly  />
+			</div>
+		</div>		
+		
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">Име:</label>
+			<div class="col-sm-8">
+				<input type="text" class="form-control" th:field="*{firstName}" readonly  />
+			</div>
+		</div>
+		
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">Фамилия:</label>
+			<div class="col-sm-8">
+				<input type="text" class="form-control" th:field="*{lastName}" readonly  />
+			</div>
+		</div>
+		<div class="text-center">
+		<th:block th:if="${canBeVoted}">
+				<div class="m-3"  th:replace="fragments :: votes_available('/user/' + ${user.id}, ${user.votesUp}, ${user.votesDown})">
+				</div>
+		</th:block>
+		<th:block th:unless="${canBeVoted}">
+				<div class="m-3" th:replace="fragments :: votes_unavailable('/user/' + ${user.id}, ${user.votesUp}, ${user.votesDown}, ${votesMessage})">
+				</div>
+		</th:block>						
+		</div>
+		<br></br>
+		<div class="text-center">
+		<input
+    	action="action"
+    	onclick="window.history.go(-1); return false;"
+    	type="submit"
+    	value="Назад"
+		/>
+		</div>
+	</div>
+	
+	</form>
+	
+</div>
+<script type="text/javascript">
+	moduleURL = "[[@{/users}]]";
+	
+	function goBack() {
+  window.history.back();
+}
+</script>
+<script th:src="@{/js/common_form.js}"></script>
+</body>
+</html>

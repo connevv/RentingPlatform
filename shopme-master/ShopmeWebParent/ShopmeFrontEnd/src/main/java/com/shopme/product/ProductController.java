@@ -110,7 +110,6 @@ public class ProductController {
 			}
 			
 			boolean canProductBeVoted = true;
-			boolean userIsCustomer = true;
 			
 			String message = "";
 			Customer customer = getAuthenticatedCustomer(request);
@@ -122,7 +121,6 @@ public class ProductController {
 					}
 				}
 			} else {
-				userIsCustomer = false;
 				canProductBeVoted = false;
 				message = message.concat("Не можеш да гласуваш без да се регистрираш.");
 			}

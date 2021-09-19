@@ -31,6 +31,15 @@ public class User extends IdBasedEntity {
 	@Column(name = "last_name", length = 45, nullable = false)
 	private String lastName;
 	
+	@Column(name = "phone_number", nullable = false, length = 15)
+	protected String phoneNumber;
+	
+	@Column(name = "votes_up", columnDefinition="default '0'")
+	private int votesUp;
+	
+	@Column(name = "votes_down", columnDefinition="default '0'")
+	private int votesDown;
+	
 	@Column(length = 64)
 	private String photos;
 	
@@ -86,6 +95,14 @@ public class User extends IdBasedEntity {
 		this.lastName = lastName;
 	}
 
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 	public String getPhotos() {
 		return photos;
 	}
@@ -114,6 +131,22 @@ public class User extends IdBasedEntity {
 		this.roles.add(role);
 	}
 
+	public int getVotesUp() {
+		return votesUp;
+	}
+
+	public void setVotesUp(int votesUp) {
+		this.votesUp = votesUp;
+	}
+
+	public int getVotesDown() {
+		return votesDown;
+	}
+
+	public void setVotesDown(int votesDown) {
+		this.votesDown = votesDown;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName
@@ -123,8 +156,8 @@ public class User extends IdBasedEntity {
 	@Transient
 	public String getPhotosImagePath() {
 		if (id == null || photos == null) return "/images/default-user.png";
-		
-		return Constants.S3_BASE_URI + "/user-photos/" + this.id + "/" + this.photos;
+
+		return "/user-photos/" + this.id + "/" + this.photos;
 	}
 	
 	@Transient

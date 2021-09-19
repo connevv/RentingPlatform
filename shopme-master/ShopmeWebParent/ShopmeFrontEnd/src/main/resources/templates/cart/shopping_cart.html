@@ -12,7 +12,7 @@
 
 	<div class="row m-1">
 		<div class="col-sm-8">
-			<th:block th:each="item, status : ${cartItems}">
+			<th:block th:each="item, status : ${cartItem}">
 			<div class="row border rounded p-1" th:with="product = ${item.product}" th:id="'row' + ${status.count}">
 				<div class="col-1">
 					<div class="divCount">[[${status.count}]]</div>
@@ -32,23 +32,32 @@
 						</a>
 					</div>
 					
-					<div>
+					<!--<div>
 						<div>Days</div>
 						<div th:replace="cart/quantity_control :: quantity_control_days(${item.days}, ${product.id})"></div>
-					</div>
+					</div>  -->
 					
 					<div>
-						<span>X&nbsp;</span>
 						<div th:replace="product/product_fragment :: product_price"></div>
 					</div>
 					
-					<div>Products #</div>
-					
-					<div th:replace="cart/quantity_control :: quantity_control(${item.quantity}, ${product.id})"></div>
+					<!-- <div th:replace="cart/quantity_control :: quantity_control(${item.quantity}, ${product.id})"></div> -->
 					
 					<div>
-						<span>=&nbsp;</span>
-						<span th:id="'subtotal' + ${product.id}" class="h4 subtotal">[[${item.subtotal}]]</span>						
+						От: [[${item.startDate}]] - [[${startDay}]]
+					</div>
+					
+					<div>
+						До: [[${item.endDate}]] - [[${endDay}]]
+					</div>
+					
+					<div>
+						<span class="h7">Дни за наем: <b>[[${item.rentedDays}]]</b></span>
+					</div>
+					
+					<div>
+						<span>Общо =&nbsp;</span>
+						<span th:id="'subtotal' + ${product.id}" class="h4 subtotal">[[${item.subtotal}]] лев(а)</span>					
 					</div>					
 				</div>
 			</div>
@@ -56,7 +65,7 @@
 			</th:block>
 		</div>
 		
-		<div class="col-sm-4" th:unless="${#lists.isEmpty(cartItems)}" id="sectionTotal">
+		<div class="col-sm-4" th:unless="${#lists.isEmpty(cartItem)}" id="sectionTotal">
 			<div>
 				<span class="h3">Estimated Total:</span>
 			</div>
@@ -64,13 +73,10 @@
 				<span id="total" class="h2">[[${estimatedTotal}]]</span>				
 			</div>
 			<div class="mt-2">
-				<div th:if="${shippingSupported}">
 				<form th:action="@{/checkout}">
-					<button type="submit" class="btn btn-danger p-3 mt-2">Check Out</button>
+					<button id="checkoutButton" type="submit" class="btn btn-danger p-3 mt-2">Check Out</button>
 				</form>
-				</div>
-				
-				<div th:unless="${shippingSupported}">
+				<!--<div th:unless="${shippingSupported}">
 					<div><span class="h5 text-warning">No shipping available for your location</span></div>
 					
 					<div th:if="${usePrimaryAddressAsDefault}">
@@ -80,22 +86,34 @@
 					<div th:unless="${usePrimaryAddressAsDefault}">
 						<a th:href="@{/address_book(redirect=cart)}" class="h6">Use another shipping address</a>
 					</div>
-				</div>
+				</div>  -->
+				
 			</div>
 		</div>
 	</div>	
 	
-	<div id="sectionEmptyCartMessage" th:class="'text-center' + ${#lists.isEmpty(cartItems) ? '' : ' d-none'}" >
+	<div id="sectionEmptyCartMessage" th:class="'text-center' + ${#lists.isEmpty(cartItem) ? '' : ' d-none'}" >
 		<h3>You have not chosen any products yet.</h3>
 	</div>
 	
 	<div th:replace="fragments :: modal_dialog"></div>
+	<div th:replace="fragments :: confirm_modal"></div>
 	<div th:replace="navigation :: footer_menu"></div>
 </div>	
 <script type="text/javascript">
 	contextPath = "[[@{/}]]";
 	var csrfHeaderName = "[[${_csrf.headerName}]]";
 	var csrfValue = "[[${_csrf.token}]]";
+	
+	$(document).ready(function() {
+		$("#checkoutButton").on("click", function(e) {
+			e.preventDefault();
+			
+			$("#yesButton").attr("href", "http://localhost/Shopme/checkout");
+			$("#confirmText").text("Are you sure you want complete your order? ");
+			$("#confirmModal").modal();
+		});
+	});
 	
 </script>
 <script type="text/javascript" th:src="@{/js/jquery.number.min.js}"></script>

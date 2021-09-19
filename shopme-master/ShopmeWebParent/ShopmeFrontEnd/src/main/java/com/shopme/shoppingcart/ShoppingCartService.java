@@ -1,5 +1,6 @@
 package com.shopme.shoppingcart;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +45,7 @@ public class ShoppingCartService {
 		return 1;
 	}
 	
-	public List<CartItem> listCartItems(Customer customer) {
+	public CartItem listCartItem(Customer customer) {
 		return cartRepo.findByCustomer(customer);
 	}
 	
