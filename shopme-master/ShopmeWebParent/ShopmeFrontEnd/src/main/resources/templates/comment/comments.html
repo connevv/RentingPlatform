@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head('Comments', 'none')" />
+<body>
+<div class="container-fluid">
+	<div th:replace="navigation :: header_menu"></div>
+	<div>
+		<h2>Comment section</h2>	
+	</div>
+	
+	<div class="details">
+		<table class="table table-bordered table-striped table-hover table-responsive-xl">
+			<thead class="thead-dark">
+				<tr>
+					<th><a class="text-white"
+						th:href="@{'/p/' + ${productAlias} + '/comments/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
+					ID
+					</a>								
+					<th>
+					User Name
+					</th>							
+					<th>
+					Comment
+					</th>								
+					<th><a class="text-white"
+						th:href="@{'/p/' + ${productAlias} + '/comments/page/' + ${currentPage} + '?sortField=date&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">
+					Date
+					</a>								
+					<span th:if="${sortField == fieldName}"
+					th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>
+					</th>	
+					
+					<th></th>
+				</tr>						
+			</thead>
+			<tbody>
+				<tr th:each="comment : ${listComments}">
+					<td>[[${comment.id}]]</td>
+					<td class="hideable-column">[[${comment.customer.firstName}]] [[${comment.customer.lastName}]]</td>
+					<td>[[${comment.name}]]</td>
+					<td>[[${comment.date}]]</td>					
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div th:replace="fragments :: pagination('/p/' + ${productAlias} + '/comments', 'comments')"></div>
+	
+	<!-- <div th:replace="fragments :: footer"></div> 
+	<div th:replace="modal_fragments :: confirm_modal" /> -->
+	
+</div>
+<script th:src="@{/js/common_list.js}"></script>
+<script type="text/javascript">
+	moduleURL = "[[@{/p/{product_alias}/comments}]]";
+	indexOfPage = moduleURL.lastIndexOf('n');
+	moduleURL = moduleURL.slice(0, indexOfPage);
+	$(document).ready(function() {
+		$(".link-delete").on("click", function(e) {
+			e.preventDefault();
+			showDeleteConfirmModal($(this), 'brand');
+		});
+	});
+</script>
+</body>
+</html>
