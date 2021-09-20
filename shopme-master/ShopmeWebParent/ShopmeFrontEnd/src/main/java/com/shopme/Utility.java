@@ -9,7 +9,7 @@ import org.springframework.security.authentication.RememberMeAuthenticationToken
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
-import com.shopme.setting.EmailSettingBag;
+import com.shopme.common.entity.setting.EmailSettingBag;
 
 public class Utility {
 	public static String getSiteURL(HttpServletRequest request) {

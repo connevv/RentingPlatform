@@ -17,22 +17,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shopme.Utility;
+import com.shopme.city.CityService;
 import com.shopme.common.entity.Customer;
+import com.shopme.common.entity.setting.EmailSettingBag;
 import com.shopme.security.CustomerUserDetails;
-import com.shopme.setting.EmailSettingBag;
 import com.shopme.setting.SettingService;
 
 @Controller
 public class CustomerController {
 	@Autowired private CustomerService customerService;
 	@Autowired private SettingService settingService;
+	@Autowired private CityService cityService;
 	
 	@GetMapping("/register")
 	public String showRegisterForm(Model model) {
-		//List<Country> listCountries = customerService.listAllCountries();
-		
-		//model.addAttribute("listCountries", listCountries);
-		model.addAttribute("pageTitle", "Customer Registration");
+		model.addAttribute("listCities", cityService.listAll());
+		model.addAttribute("pageTitle", "Регистрация");
 		model.addAttribute("customer", new Customer());
 		
 		return "register/register_form";

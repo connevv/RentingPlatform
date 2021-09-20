@@ -61,4 +61,8 @@ public class ProductService {
 		Optional<Product> product = repo.findById(id);
 		return product.get();
 	}
+	
+	public void saveProduct(Product product) {
+		repo.save(product);
+	}
 }

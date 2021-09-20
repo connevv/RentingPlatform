@@ -28,6 +28,10 @@ public class CategoryService {
 	@Autowired
 	private CategoryRepository repo;
 	
+	public Iterable<Category> listAll() {
+		return repo.findAll();
+	}
+	
 	public List<Category> listByPage(CategoryPageInfo pageInfo, int pageNum, String sortDir,
 			String keyword) {
 		Sort sort = Sort.by("name");

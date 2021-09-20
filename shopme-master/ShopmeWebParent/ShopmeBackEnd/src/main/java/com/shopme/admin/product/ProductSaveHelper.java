@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -73,6 +74,20 @@ public class ProductSaveHelper {
 				product.addDetail(id, name, value);
 			} else if (!name.isEmpty() && !value.isEmpty()) {
 				product.addDetail(name, value);
+			}
+		}
+	}
+	
+	static void setProductUnavailabilities(String[] unavailabilityIDs, Date[] unavailabilityStartDate, 
+			Date[] unavailabilityEndDate, Product product) {
+		if (unavailabilityStartDate == null || unavailabilityStartDate.length == 0) return;
+		
+		for (int count = 0; count < unavailabilityStartDate.length; count++) {
+			Date startDate = unavailabilityStartDate[count];
+			Date endDate = unavailabilityEndDate[count];
+		
+			if (!startDate.toString().isEmpty() && !endDate.toString().isEmpty()) {
+				product.addUnavailability(startDate, endDate);
 			}
 		}
 	}

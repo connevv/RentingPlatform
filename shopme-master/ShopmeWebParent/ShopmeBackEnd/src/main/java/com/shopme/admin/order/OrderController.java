@@ -1,10 +1,4 @@
-package com.shopme.admin.order;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Set;
+ package com.shopme.admin.order;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,11 +16,6 @@ import com.shopme.admin.paging.PagingAndSortingParam;
 import com.shopme.admin.security.ShopmeUserDetails;
 import com.shopme.admin.setting.SettingService;
 import com.shopme.common.entity.order.Order;
-import com.shopme.common.entity.order.OrderDetail;
-import com.shopme.common.entity.order.OrderStatus;
-import com.shopme.common.entity.order.OrderTrack;
-import com.shopme.common.entity.product.Product;
-import com.shopme.common.entity.setting.Setting;
 import com.shopme.common.exception.OrderNotFoundException;
 
 @Controller
@@ -85,7 +74,7 @@ public class OrderController {
 	public String deleteOrder(@PathVariable("id") Integer id, Model model, RedirectAttributes ra) {
 		try {
 			orderService.delete(id);;
-			ra.addFlashAttribute("message", "The order ID " + id + " has been deleted.");
+			ra.addFlashAttribute("message", "Поръчка номер " + id + " е изтрита успешно.");
 		} catch (OrderNotFoundException ex) {
 			ra.addFlashAttribute("message", ex.getMessage());
 		}
@@ -112,83 +101,60 @@ public class OrderController {
 	}	
 	
 	@PostMapping("/order/save")
-	public String saveOrder(Order order, HttpServletRequest request, RedirectAttributes ra) {
-		
-		//updateProductDetails(order, request);
-		//updateOrderTracks(order, request);
+	public String saveOrder(Order order, HttpServletRequest request, RedirectAttributes ra) throws OrderNotFoundException {
+		try {
+			Order oldOrder = orderService.get(order.getId());
+			order.setCustomer(oldOrder.getCustomer());
+			order.setProduct(oldOrder.getProduct());
+			order.setStartDay(oldOrder.getStartDay());
+			order.setEndDay(oldOrder.getEndDay());
+			order.setOrderTime(oldOrder.getOrderTime());
+			order.setRentedDays(oldOrder.getRentedDays());
+			
+			orderService.save(order);
+		} catch (OrderNotFoundException e) {
+			// TODO Auto-generated catch block
+			throw new OrderNotFoundException("Поръчката не може да бъде намерена");
+		}
 
-		orderService.save(order);		
+			
 		
 		ra.addFlashAttribute("message", "The order ID " + order.getId() + " has been updated successfully");
 		
 		return defaultRedirectURL;
 	}
-
-	/*private void updateOrderTracks(Order order, HttpServletRequest request) {
-		String[] trackIds = request.getParameterValues("trackId");
-		String[] trackStatuses = request.getParameterValues("trackStatus");
-		String[] trackDates = request.getParameterValues("trackDate");
-		String[] trackNotes = request.getParameterValues("trackNotes");
+	
+	/*private void sendOrderStatusChangedEmail(HttpServletRequest request, Order order) 
+			throws UnsupportedEncodingException, MessagingException {
+		EmailSettingBag emailSettings = settingService.getEmailSettings();
+		JavaMailSenderImpl mailSender = Utility.prepareMailSender(emailSettings);
+		mailSender.setDefaultEncoding("utf-8");
 		
-		List<OrderTrack> orderTracks = order.getOrderTracks();
-		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+		String toAddress = order.getCustomer().getEmail();
+		String subject = emailSettings.getOrderConfirmationSubject();
+		String content = emailSettings.getOrderConfirmationContent();
 		
-		for (int i = 0; i < trackIds.length; i++) {
-			OrderTrack trackRecord = new OrderTrack();
-			
-			Integer trackId = Integer.parseInt(trackIds[i]);
-			if (trackId > 0) {
-				trackRecord.setId(trackId);
-			}
-			
-			trackRecord.setOrder(order);
-			trackRecord.setStatus(OrderStatus.valueOf(trackStatuses[i]));
-			trackRecord.setNotes(trackNotes[i]);
-			
-			try {
-				trackRecord.setUpdatedTime(dateFormatter.parse(trackDates[i]));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			
-			orderTracks.add(trackRecord);
-		}
-	}*/
-
-	/*private void updateProductDetails(Order order, HttpServletRequest request) {
-		String[] detailIds = request.getParameterValues("detailId");
-		String[] productIds = request.getParameterValues("productId");
-		String[] productPrices = request.getParameterValues("productPrice");
-		String[] quantities = request.getParameterValues("quantity");
-		String[] productSubtotals = request.getParameterValues("productSubtotal");
-		String[] productShipCosts = request.getParameterValues("productShipCost");
+		subject = subject.replace("[[orderId]]", String.valueOf(order.getId()));
 		
-		Set<OrderDetail> orderDetails = order.getOrderDetails();
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message);
 		
-		for (int i = 0; i < detailIds.length; i++) {
-			System.out.println("Detail ID: " + detailIds[i]);
-			System.out.println("\t Product ID: " + productIds[i]);
-			System.out.println("\t Quantity: " + quantities[i]);
-			System.out.println("\t Subtotal: " + productSubtotals[i]);
-			System.out.println("\t Ship cost: " + productShipCosts[i]);
-			
-			OrderDetail orderDetail = new OrderDetail();
-			Integer detailId = Integer.parseInt(detailIds[i]);
-			if (detailId > 0) {
-				orderDetail.setId(detailId);
-			}
-			
-			orderDetail.setOrder(order);
-			orderDetail.setProduct(new Product(Integer.parseInt(productIds[i])));
-			orderDetail.setSubtotal(Float.parseFloat(productSubtotals[i]));
-			orderDetail.setShippingCost(Float.parseFloat(productShipCosts[i]));
-			orderDetail.setQuantity(Integer.parseInt(quantities[i]));
-			orderDetail.setUnitPrice(Float.parseFloat(productPrices[i]));
-			
-			orderDetails.add(orderDetail);
-			
-		}
+		helper.setFrom(emailSettings.getFromAddress(), emailSettings.getSenderName());
+		helper.setTo(toAddress);
+		helper.setSubject(subject);
 		
+		DateFormat dateFormatter =  new SimpleDateFormat("HH:mm:ss E, dd MMM yyyy");
+		String orderTime = dateFormatter.format(order.getOrderTime());
+		
+		String totalAmount = Float.toString(order.getTotal()) + " BGN";
+		
+		content = content.replace("[[name]]", order.getCustomer().getFullName());
+		content = content.replace("[[orderId]]", String.valueOf(order.getId()));
+		content = content.replace("[[orderTime]]", orderTime);
+		content = content.replace("[[total]]", totalAmount);
+		
+		helper.setText(content, true);
+		mailSender.send(message);		
 	}*/
 	
 }

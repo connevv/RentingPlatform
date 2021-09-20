@@ -14,11 +14,11 @@ public class ShippingRateService {
 	
 	public ShippingRate getShippingRateForCustomer(Customer customer) {
 		
-		return repo.findByCity(customer.getCity());
+		return repo.findByCity(customer.getCity().getName());
 	}
 	
 	public ShippingRate getShippingRateForAddress(Address address) {
 		
-		return repo.findByCity(address.getCity());
+		return repo.findByCity(address.getCity().getName());
 	}
 }

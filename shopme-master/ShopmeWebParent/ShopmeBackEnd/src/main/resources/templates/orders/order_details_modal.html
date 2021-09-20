@@ -6,23 +6,20 @@
 	<div>
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
 		  <li class="nav-item">
-		    <a class="nav-link active" id="overview-tab" data-toggle="tab" href="#overview" role="tab">Overview</a>
+		    <a class="nav-link active" id="overview-tab" data-toggle="tab" href="#overview" role="tab">Общо</a>
 		  </li>
 		  <li class="nav-item">
-		    <a class="nav-link" id="products-tab" data-toggle="tab" href="#products" role="tab">Products</a>
+		    <a class="nav-link" id="products-tab" data-toggle="tab" href="#products" role="tab">Продукт</a>
 		  </li>
 		  <li class="nav-item">
-		    <a class="nav-link" id="shipping-tab" data-toggle="tab" href="#shipping" role="tab">Shipping</a>
-		  </li>
-		  <li class="nav-item">
-		    <a class="nav-link" id="track-tab" data-toggle="tab" href="#track" role="tab">Track</a>
-		  </li>		  		  		  
+		    <a class="nav-link" id="shipping-tab" data-toggle="tab" href="#shipping" role="tab">Подробности</a>
+		  </li>	  		  		  
 		</ul>
 		<div class="tab-content" id="myTabContent">
 		  <div class="tab-pane fade show active p-3" id="overview" role="tabpanel">
 			<form>
 			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Order ID:</label>
+			    <label class="col-sm-2 col-form-label">Идентификационен номер:</label>
 			    <div class="col-sm-10">
 			      <input type="text" readonly class="form-control" th:value="${order.id}">
 			    </div>
@@ -30,184 +27,78 @@
 			  
 			  <th:block th:if="${isVisibleForAdminOrRentPerson}">
 			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Customer:</label>
+			    <label class="col-sm-2 col-form-label">Клиент:</label>
 			    <div class="col-sm-10">
 			      <input type="text" readonly class="form-control" th:value="${order.customer.fullName}">
 			    </div>
 			  </div>
 			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Product Cost:</label>
+			    <label class="col-sm-2 col-form-label">Наемател:</label>
 			    <div class="col-sm-10">
-			      <div th:replace="fragments :: currency_input(${order.productCost})">Cost</div>
+			      <input type="text" readonly class="form-control" th:value="${order.product.user.fullName}">
 			    </div>
-			  </div>			  		  
+			  </div>	  		  
 			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Subtotal:</label>
+			    <label class="col-sm-2 col-form-label">Обща сума за плащане:</label>
 			    <div class="col-sm-10">
-			      <div th:replace="fragments :: currency_input(${order.subtotal})">Subtotal</div>
+			      <div th:replace="fragments :: currency_input(${order.total})"></div>
 			    </div>
 			  </div>
-			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Shipping Cost:</label>
-			    <div class="col-sm-10">
-			      <div th:replace="fragments :: currency_input(${order.shippingCost})">Shipping cost</div>
-			    </div>
-			  </div>
-			  
-			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Total:</label>
-			    <div class="col-sm-10">
-			      <div th:replace="fragments :: currency_input(${order.total})">Total</div>
-			    </div>
-			  </div>
-			  
-			  <th:block th:if="${isVisibleForAdminOrSalesperson}">
 			  <div class="form-group row">
 			    <label class="col-sm-2 col-form-label"></label>
 			    <div class="col-sm-10">
-			      TOTAL = Subtotal + Shipping Cost
+			      Обща сума = Наети дни * цена на продукта
 			    </div>
-			  </div>		
-			  </th:block>
-			  	  
+			  </div>					  	
 			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Payment Method:</label>
-			    <div class="col-sm-10">
-			      <span>[[${order.paymentMethod}]]</span>
-			    </div>
-			  </div>			  	
-			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Status:</label>
+			    <label class="col-sm-2 col-form-label">Статус:</label>
 			    <div class="col-sm-10">
 			      <span>[[${order.status}]]</span>
-			    </div>
-			  </div>		    			  
-			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Order Date:</label>
-			    <div class="col-sm-10">
-			      <div th:replace="fragments :: format_time(${order.orderTime})">Order Time</div>
 			    </div>
 			  </div>
 			</form>
 		  </div>
 		  <div class="tab-pane fade p-3" id="products" role="tabpanel">
-			<th:block th:each="detail, status : ${order.orderDetails}">
-			<div class="row border rounded p-1" th:with="product = ${detail.product}">
-				<div class="col-sm-1">
-					<div class="div-count">[[${status.count}]]</div>					
-				</div>
-				<div class="col-sm-3"><img th:src="@{${product.mainImagePath}}" class="img-fluid" /></div>
+			<div class="row border rounded p-1">
+				<div class="col-sm-3"><img th:src="@{${order.product.mainImagePath}}" class="img-fluid" /></div>
 				<div class="col-sm-8">
 					<div class="text-wrap">
-						<b>[[${product.name}]]</b>
+						<b>[[${order.product.name}]]</b>
 					</div>
-					
-					<th:block th:if="${isVisibleForAdminOrSalesperson}">
-					<div>
-						Product Cost: <div>[[${detail.productCost}]]</div>
-					</div>
-					<div>
-						Subtotal: [[${detail.quantity}]] X
-						<div>[[${detail.unitPrice}]]</div>
-						 = 
-						 <div>[[${detail.subtotal}]]</div>
-					</div>
-					<div>
-						Shipping Cost: <div>[[${detail.shippingCost}]]</div>
-					</div>					
-					</th:block>
 				</div>
 			</div>
-			</th:block>
 		  </div>
 		  <div class="tab-pane fade p-3" id="shipping" role="tabpanel">
 			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Deliver Days:</label>
+			    <label class="col-sm-2 col-form-label">Дата на поръчка:</label>
 			    <div class="col-sm-10">
-			      <input type="text" readonly class="form-control" th:value="${order.deliverDays}">
+			      <input type="text" readonly class="form-control" th:value="${order.orderTime}">
 			    </div>
 			  </div>		  
 			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Expected Deliver Date:</label>
+			    <label class="col-sm-2 col-form-label">Начална дата на наема:</label>
 			    <div class="col-sm-10">
-			    	<span th:text="${#dates.format(order.deliverDate, 'E, dd MMM yyyy')}"></span>
+			    	<input type="text" readonly class="form-control" th:value="${#dates.format(order.startDay, 'E, dd MMM yyyy')}"></input>
 			    </div>
 			  </div>			  
 			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">First Name:</label>
+			    <label class="col-sm-2 col-form-label">Дата на връщане:</label>
 			    <div class="col-sm-10">
-			      <input type="text" readonly class="form-control" th:value="${order.firstName}">
+			    	<input type="text" readonly class="form-control" th:value="${#dates.format(order.endDay, 'E, dd MMM yyyy')}"></input>
 			    </div>
 			  </div>
 			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Last Name:</label>
+			    <label class="col-sm-2 col-form-label">Дни под наем:</label>
 			    <div class="col-sm-10">
-			      <input type="text" readonly class="form-control" th:value="${order.lastName}">
+			      <input type="text" readonly class="form-control" th:value="${order.rentedDays}">
 			    </div>
 			  </div>
 			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Phone Number:</label>
+			    <label class="col-sm-2 col-form-label">Град:</label>
 			    <div class="col-sm-10">
-			      <input type="text" readonly class="form-control" th:value="${order.phoneNumber}">
+			      <input type="text" readonly class="form-control" th:value="${order.product.city.name}">
 			    </div>
-			  </div>
-			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Address Line 1:</label>
-			    <div class="col-sm-10">
-			      <input type="text" readonly class="form-control" th:value="${order.addressLine1}">
-			    </div>
-			  </div>
-			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Address Line 2:</label>
-			    <div class="col-sm-10">
-			      <input type="text" readonly class="form-control" th:value="${order.addressLine2}">
-			    </div>
-			  </div>
-			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">City:</label>
-			    <div class="col-sm-10">
-			      <input type="text" readonly class="form-control" th:value="${order.city}">
-			    </div>
-			  </div>
-			  <div class="form-group row">
-			    <label class="col-sm-2 col-form-label">Postal Code:</label>
-			    <div class="col-sm-10">
-			      <input type="text" readonly class="form-control" th:value="${order.postalCode}">
-			    </div>
-			  </div>			  
-		  </div>
-		  
-		  <div class="tab-pane fade p-3" id="track" role="tabpanel">
-		  	<div class="full-details">
-			<table class="table table-striped table-bordered table-hover table-responsive-sm">
-				<thead class="thead-dark">
-					<tr>
-						<th>Time</th>
-						<th>Status</th>
-						<th>Notes</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="track : ${order.orderTracks}">
-						<td>[[${track.updatedTime}]]</td>
-						<td>[[${track.status}]]</td>
-						<td><i>[[${track.notes}]]</i></td>
-					</tr>
-				</tbody>
-			</table>
-			</div>
-			
-			<div class="less-details">
-			<th:block th:each="track : ${order.orderTracks}">
-				<div class="row p-1">
-					<span>[[${track.updatedTime}]]</span>
-				</div>
-				<div class="row p-1 ml-3">
-					<span>&nbsp;&nbsp;<b>[[${track.status}]]</b>: <i>[[${track.notes}]]</i></span>
-				</div>				
-				<div class="row">&nbsp;</div>							
-			</th:block>
-			</div>
+			  </div>	  
 		  </div>
 		  		    
 		</div>				

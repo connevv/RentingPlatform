@@ -29,12 +29,11 @@ public class ShoppingCartRestController {
 		try {
 			SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
 			Customer customer = getAuthenticatedCustomer(request);
-			Date test = myFormat.parse(startDay);
 			Integer updatedQuantity = cartService.addProduct(productId, customer, myFormat.parse(startDay), myFormat.parse(endDay));
 			
-			return updatedQuantity + " item of this product were added to your shopping cart.";
+			return "Продуктът е добавен успешно във вашата количка.";
 		} catch (CustomerNotFoundException ex) {
-			return "You must login to add this product to cart.";
+			return "Трябва да влезете в профила си, за да добавите този продукт в кошницата.";
 		} catch (ShoppingCartException ex) {
 			return ex.getMessage();	
 		} catch (ParseException e) {
@@ -48,24 +47,11 @@ public class ShoppingCartRestController {
 			throws CustomerNotFoundException {
 		String email = Utility.getEmailOfAuthenticatedCustomer(request);
 		if (email == null) {
-			throw new CustomerNotFoundException("No authenticated customer");
+			throw new CustomerNotFoundException("Няма удостоверен клиент");
 		}
 				
 		return customerService.getCustomerByEmail(email);
 	}
-	
-	/*@PostMapping("/cart/update/{productId}/{quantity}/{daysQuantity}")
-	public String updateQuantity(@PathVariable("productId") Integer productId,
-			@PathVariable("quantity") Integer quantity, @PathVariable("daysQuantity") Integer daysQuantity, HttpServletRequest request) {
-		try {
-			Customer customer = getAuthenticatedCustomer(request);
-			float subtotal = cartService.updateQuantity(productId, quantity, daysQuantity, customer);
-			
-			return String.valueOf(subtotal);
-		} catch (CustomerNotFoundException ex) {
-			return "You must login to change quantity of product.";
-		}	
-	}*/
 	
 	@DeleteMapping("/cart/remove/{productId}")
 	public String removeProduct(@PathVariable("productId") Integer productId,
@@ -74,10 +60,10 @@ public class ShoppingCartRestController {
 			Customer customer = getAuthenticatedCustomer(request);
 			cartService.removeProduct(productId, customer);
 			
-			return "The product has been removed from your shopping cart.";
+			return "Продуктът е успешно премахнат от кошницата ви.";
 			
 		} catch (CustomerNotFoundException e) {
-			return "You must login to remove product.";
+			return "Трябва да влезете в профила си, за да махнете този продукт от кошницата.";
 		}
 	}
 }

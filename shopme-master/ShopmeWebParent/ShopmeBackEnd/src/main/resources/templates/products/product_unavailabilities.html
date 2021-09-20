@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content" id="divProductUnavailability">
+	<th:block th:each="unavailabilities, status : ${product.unavailabilities}">
+	<div class="form-inline" th:id="'divUnavailability' + ${status.index}">
+		<input type="hidden" name="unavailabilityIDs" th:value="${status.index}" />
+		<label class="m-3">Start date:</label>
+		<input type="date" class="form-control w-25" name="unavailabilityStartDate"
+			th:value="${#dates.format(unavailabilities.startDate, 'yyyy-MM-dd')}" />
+		<label class="m-3">End date:</label>
+		<input type="date" class="form-control w-25" name="unavailabilityEndDate"
+			th:value="${#dates.format(unavailabilities.endDate, 'yyyy-MM-dd')}" />
+		<a name="linkRemoveUnavailability" class="btn fas fa-times-circle fa-2x icon-dark"
+			title="Remove this termin"></a>			
+	</div>	
+	</th:block>
+	
+	<div class="form-inline" th:id="'divUnavailability' + ${#lists.size(product.unavailabilities)}">
+		<input type="hidden" name="unavailabilityIDs" value="0" />
+		<label class="m-3">Start date:</label>
+		<input type="date" class="form-control w-25" name="unavailabilityStartDate" />
+		<label class="m-3">End date:</label>
+		<input type="date" class="form-control w-25" name="unavailabilityEndDate" />	
+	</div>	
+</div>		
+</body>
+</html>

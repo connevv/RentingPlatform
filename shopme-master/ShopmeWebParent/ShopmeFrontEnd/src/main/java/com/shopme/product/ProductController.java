@@ -29,6 +29,7 @@ import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Category;
 import com.shopme.common.entity.Comment;
 import com.shopme.common.entity.Customer;
+import com.shopme.common.entity.Unavailability;
 import com.shopme.common.entity.product.Product;
 import com.shopme.common.exception.CategoryNotFoundException;
 import com.shopme.common.exception.ProductNotFoundException;
@@ -88,7 +89,6 @@ public class ProductController {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	@GetMapping("/p/{product_alias}")
 	public String viewProductDetail(@PathVariable("product_alias") String alias, Model model,  HttpServletRequest request) {
 		
@@ -98,20 +98,22 @@ public class ProductController {
 			
 			boolean canProductBeRented = true;
 			//Date takenUntil = product.getTakenUntil();
-			SimpleDateFormat myFormat = new SimpleDateFormat("dd MM yyyy");
-			Date takenUntil = myFormat.parse("23 07 2021");
-			Date today = new Date();
+			Set<Unavailability> allUnavailableDays = product.getUnavailabilities();
 			
-			int result = today.compareTo(takenUntil);
-			if (result < 0) {
-				canProductBeRented = false;
-				String dateUntilCanBeRented = takenUntil.toString() + "/" + takenUntil.getMonth() + "/" + takenUntil.getYear();
-				model.addAttribute("dateUntilCanBeRented", dateUntilCanBeRented.substring(0, 10));
+			if (!allUnavailableDays.isEmpty()) {
+				Date today = new Date();
+				for (Unavailability takenDate : allUnavailableDays) {
+					if (today.after(takenDate.getStartDate()) && today.before(takenDate.getEndDate())) {
+						canProductBeRented = false;
+					}
+				}
 			}
 			
 			boolean canProductBeVoted = true;
+			boolean canProductBeCommented = true;
 			
 			String message = "";
+			String commentMessage = "";
 			Customer customer = getAuthenticatedCustomer(request);
 			if (customer != null) {
 				for(Product productItem :customer.getProducts()) {
@@ -121,8 +123,10 @@ public class ProductController {
 					}
 				}
 			} else {
+				canProductBeCommented = false;
 				canProductBeVoted = false;
 				message = message.concat("Не можеш да гласуваш без да се регистрираш.");
+				commentMessage = commentMessage.concat("Не можеш да гласуваш без да се регистрираш.");
 			}
 			
 			model.addAttribute("listCategoryParents", listCategoryParents);
@@ -130,13 +134,13 @@ public class ProductController {
 			model.addAttribute("pageTitle", product.getShortName());
 			model.addAttribute("canBeRented", canProductBeRented);
 			model.addAttribute("canBeVoted", canProductBeVoted);
+			model.addAttribute("canBeCommented", canProductBeCommented);
 			model.addAttribute("votesMessage", message);
+			model.addAttribute("commentMessage", commentMessage);
 			model.addAttribute("comment", new Comment());
 
 			return "product/product_detail";
 		} catch (ProductNotFoundException e) {
-			return "error/404";
-		} catch (ParseException e) {
 			return "error/404";
 		}
 	}
@@ -176,13 +180,13 @@ public class ProductController {
 		} else {
 			model.addAttribute("listResult", listResult);
 			if (keyword != "" && city != "") {
-				message = message.concat("No match found for '" + keyword + "' in city '" + city + "'");
+				message = message.concat("Не е намерено съвпадение за '" + keyword + "' в град '" + city + "'");
 			} else if (keyword != "" && city == "") {
-				message = message.concat("No match found for '" + keyword + "'");
+				message = message.concat("Не е намерено съвпадение за '" + keyword + "'");
 			} else if (keyword == "" && city != "") {
-				message = message.concat("No match found for '" + city + "'");
+				message = message.concat("Не е намерено съвпадение за град '" + city + "'");
 			} else {
-				message = message.concat("No match found. Please enter eather product or city.");
+				message = message.concat("Не е намерено съвпадение. Моля, въведете продукт или град.");
 			}
 			
 		}
@@ -239,7 +243,6 @@ public class ProductController {
 			Model model) throws ProductNotFoundException {
 		
 		Product product = productService.getProduct(alias);
-		//commentService.getCommentsByProductsId(product, null);
 		
 		Page<Comment> page =commentService.listByPage(pageNum,  product, sortField, sortDir, keyword);
 		List<Comment> listComments = page.getContent();
@@ -279,7 +282,7 @@ public class ProductController {
 			
 			commentService.createComment(comment);
 
-			ra.addFlashAttribute("message", "The comment has been added successfully.");
+			ra.addFlashAttribute("message", "Коментара е добавен успешно.");
 			return redirectURL;
 		} catch (ProductNotFoundException e) {
 			// TODO Auto-generated catch block

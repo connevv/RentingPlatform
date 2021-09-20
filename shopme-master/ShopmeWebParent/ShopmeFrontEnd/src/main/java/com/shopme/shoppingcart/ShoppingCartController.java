@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -20,15 +21,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.shopme.Utility;
 import com.shopme.address.AddressService;
+import com.shopme.availability.UnavailabilityService;
 import com.shopme.checkout.CheckoutInfo;
 import com.shopme.common.entity.Address;
 import com.shopme.common.entity.CartItem;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.ShippingRate;
+import com.shopme.common.entity.Unavailability;
 import com.shopme.common.entity.order.Order;
+import com.shopme.common.entity.product.Product;
+import com.shopme.common.entity.setting.EmailSettingBag;
 import com.shopme.customer.CustomerService;
 import com.shopme.order.OrderService;
-import com.shopme.setting.EmailSettingBag;
+import com.shopme.product.ProductService;
 import com.shopme.setting.PaymentSettingBag;
 import com.shopme.setting.SettingService;
 import com.shopme.shipping.ShippingRateService;
@@ -37,10 +42,10 @@ import com.shopme.shipping.ShippingRateService;
 public class ShoppingCartController {
 	@Autowired private CustomerService customerService;
 	@Autowired private ShoppingCartService cartService;
-	@Autowired private AddressService addressService;
-	@Autowired private ShippingRateService shipService;
 	@Autowired private OrderService orderService;
 	@Autowired private SettingService settingService;
+	@Autowired private UnavailabilityService unavailabilityService;
+	@Autowired private ProductService productService;
 	
 	@GetMapping("/cart")
 	public String viewCart(Model model, HttpServletRequest request) {
@@ -70,9 +75,18 @@ public class ShoppingCartController {
 		cartService.deleteByCustomer(customer);
 		
 		Order createdOrder = orderService.createOrder(customer, cartItem);
+		
+		Product product = createdOrder.getProduct();
+		Set<Unavailability> takenDates = product.getUnavailabilities();
+		Unavailability newUnavailability = new Unavailability(createdOrder.getStartDay(), createdOrder.getEndDay());
+		takenDates.add(newUnavailability);
+		unavailabilityService.addUnavailability(newUnavailability);
+		product.setUnavailabilities(takenDates);
+		
+		productService.saveProduct(product);
 		sendOrderConfirmationEmail(request, createdOrder);
 		
-		return "checkout/order_completed";
+		return "cart/order_completed";
 	}
 	
 	private Customer getAuthenticatedCustomer(HttpServletRequest request) {

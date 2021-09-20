@@ -40,39 +40,7 @@
 						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
 					</th>
 					<th>Продукт</th>
-					<th>
-						<a class="text-white"
-						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
-						Дата на поръчка
-						
-						</a>								
-						<span th:if="${sortField == fieldName}"
-						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
-					</th>
-					<th>
-						<a class="text-white"
-						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
-						Начална дата на наема
-						</a>								
-						<span th:if="${sortField == fieldName}"
-						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
-					</th>
-					<th>
-						<a class="text-white"
-						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
-						Дата на връщане
-						</a>								
-						<span th:if="${sortField == fieldName}"
-						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
-					</th>
-					<th>
-						<a class="text-white"
-						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
-						Дни под наем
-						</a>								
-						<span th:if="${sortField == fieldName}"
-						th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>	
-					</th>
+					<th>Наемател</th>
 					<th>
 						<a class="text-white"
 						th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
@@ -103,11 +71,12 @@
 			<tbody>
 				<tr th:each="order : ${listOrders}">
 					<td th:text="${order.id}">Номер</td>
-					<td th:utext="${order.productNames}"></td>
-					<td><div th:replace="fragments :: format_time(${order.orderTime})">Дата на поръчка</div></td>
-					<td><div th:replace="fragments :: format_time(${order.startDay})">Начална дата на наема</div></td>
-					<td><div th:replace="fragments :: format_time(${order.endDay})">Дата на връщане</div></td>
-					<td><div>[[${order.rentedDays}]]</div></td>
+					<td><a class = "linkProductDetail" th:href="@{'/p/' + ${order.product.alias}}">[[${order.product.name}]]</a></td>
+					<td>
+						<a class="linkRenterDetail" th:href="@{'/users/detail/' + ${order.product.user.id}}">
+						[[${order.product.user.fullName}]]
+						</a>
+					</td>
 					<td>
 						<div>[[${order.total}]] лв</div>
 					</td>
@@ -116,14 +85,21 @@
 					<td>
 						<a class="fas fa-file-alt fa-2x icon-green linkDetail" 
 							th:href="@{'/orders/detail/' + ${order.id}}" 
-							title="View details of this order"></a>
+							title="Виж информаця за тази поръчка"></a>
+						&nbsp;
+						<a class="fas fa-trash fa-2x icon-dark link-delete"
+							th:href="@{'/orders/delete/' + ${order.id}}"
+							th:entityId="${order.id}"
+							th:title="'Изтри тази поръчка'"></a>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 	
-	<div th:replace="fragments :: pagination('/orders', 'orders')"></div>
+	<div th:replace="fragments :: pagination('/orders', 'поръчки')"></div>
+	
+	<div th:replace="fragments :: confirm_modal"></div>
 		
 	<div class="modal fade" id="orderDetailsModal">
 	  <div class="modal-dialog modal-xl">
@@ -131,11 +107,19 @@
 	    </div>
 	  </div>
 	</div>	
+	
+	<div class="modal fade" id="customerDetailModal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+			</div>
+		</div>
+	</div>
 			
 	<div>&nbsp;</div>
 	<div th:replace="navigation :: footer_menu"></div>
 	
 </div>
+<script th:src="@{/js/common_list.js}"></script>
 <script type="text/javascript">
 	moduleURL = "[[@{/orders}]]";
 	contextPath = "[[@{/}]]";
@@ -148,6 +132,8 @@
 
 	$(document).ready(function(){
 		handleDetailLink();
+		handleLinkViewCustomerDetails();
+		handleLinkDeleteOrder();
 	});
 	
 	function handleDetailLink() {
@@ -155,8 +141,22 @@
 			e.preventDefault();
 			$('#orderDetailsModal').modal('show').find('.modal-content').load($(this).attr('href'));
 		});		
+	}
+	
+	function handleLinkViewCustomerDetails() {
+		$(".linkRenterDetail").on("click", function(e) {
+			e.preventDefault();
+			linkDetailURL = $(this).attr("href");
+			$("#customerDetailModal").modal("show").find(".modal-content").load(linkDetailURL);
+		});			
+	}
+	
+	function handleLinkDeleteOrder() {
+		$(".link-delete").on("click", function(e) {
+			e.preventDefault();
+			showDeleteConfirmModal($(this), 'order');
+		});		
 	}	
 </script>
-<script type="text/javascript" th:src="@{/js/return_order.js}"></script>
 </body>
 </html>

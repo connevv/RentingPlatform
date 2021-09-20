@@ -66,23 +66,6 @@ public class CustomerService {
 		}
 	}
 	
-	public void addNewCustomerUponOAuthLogin(String name, String email, String countryCode,
-			AuthenticationType authenticationType) {
-		Customer customer = new Customer();
-		customer.setEmail(email);
-		setName(name, customer);
-		
-		customer.setEnabled(true);
-		customer.setCreatedTime(new Date());
-		customer.setAuthenticationType(authenticationType);
-		customer.setPassword("");
-		customer.setAddressLine1("");
-		customer.setCity("");
-		customer.setPhoneNumber("");
-		customer.setPostalCode("");
-		
-		customerRepo.save(customer);
-	}	
 	
 	private void setName(String name, Customer customer) {
 		String[] nameArray = name.split(" ");

@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 
 import com.shopme.common.entity.Address;
+import com.shopme.common.entity.City;
 import com.shopme.common.entity.Customer;
 
 @DataJpaTest
@@ -33,7 +34,7 @@ public class AddressRepositoryTests {
 		newAddress.setPhoneNumber("19094644165");
 		newAddress.setAddressLine1("4213 Gordon Street");
 		newAddress.setAddressLine2("Novak Building");
-		newAddress.setCity("Chino");
+		newAddress.setCity(new City("Chino"));
 		newAddress.setPostalCode("91710");
 		
 		Address savedAddress = repo.save(newAddress);

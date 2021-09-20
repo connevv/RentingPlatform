@@ -1,9 +1,12 @@
 package com.shopme.admin.product;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shopme.admin.FileUploadUtil;
+import com.shopme.admin.availability.UnavailabilityService;
 import com.shopme.admin.brand.BrandService;
 import com.shopme.admin.category.CategoryService;
 import com.shopme.admin.city.CityService;
@@ -24,6 +28,7 @@ import com.shopme.admin.security.ShopmeUserDetails;
 import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Category;
 import com.shopme.common.entity.City;
+import com.shopme.common.entity.Unavailability;
 import com.shopme.common.entity.product.Product;
 import com.shopme.common.exception.ProductNotFoundException;
 
@@ -34,6 +39,7 @@ public class ProductController {
 	@Autowired private BrandService brandService;
 	@Autowired private CategoryService categoryService;
 	@Autowired private CityService cityService;
+	@Autowired private UnavailabilityService unavailabilityService;
 	
 	@GetMapping("/products")
 	public String listFirstPage(Model model) {
@@ -65,6 +71,10 @@ public class ProductController {
 	public String newProduct(Model model, @AuthenticationPrincipal ShopmeUserDetails loggedUser) {
 		List<Brand> listBrands = brandService.listAll();
 		List<City> listCities = cityService.listAll();
+		List<Category> listCategories = new ArrayList<>();
+		categoryService.listAll().forEach(Cagegory -> {
+			listCategories.add(Cagegory);
+		});
 		
 		Product product = new Product();
 		product.setEnabled(true);
@@ -77,6 +87,7 @@ public class ProductController {
 		model.addAttribute("product", product);
 		model.addAttribute("listBrands", listBrands);
 		model.addAttribute("listCities", listCities);
+		model.addAttribute("listCategories", listCategories);
 		model.addAttribute("pageTitle", "Create New Product");
 		model.addAttribute("numberOfExistingExtraImages", 0);
 		model.addAttribute("isLoggedUserAdmin", isLoggedUserAdmin);
@@ -91,6 +102,9 @@ public class ProductController {
 			@RequestParam(name = "detailIDs", required = false) String[] detailIDs,
 			@RequestParam(name = "detailNames", required = false) String[] detailNames,
 			@RequestParam(name = "detailValues", required = false) String[] detailValues,
+			@RequestParam(name = "unavailabilityIDs", required = false) String[] unavailabilityIDs,
+			@RequestParam(name = "unavailabilityStartDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date [] unavailabilityStartDate,
+			@RequestParam(name = "unavailabilityEndDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date[] unavailabilityEndDate,
 			@RequestParam(name = "imageIDs", required = false) String[] imageIDs,
 			@RequestParam(name = "imageNames", required = false) String[] imageNames,
 			@AuthenticationPrincipal ShopmeUserDetails loggedUser
@@ -108,7 +122,20 @@ public class ProductController {
 		ProductSaveHelper.setExistingExtraImageNames(imageIDs, imageNames, product);
 		ProductSaveHelper.setNewExtraImageNames(extraImageMultiparts, product);
 		ProductSaveHelper.setProductDetails(detailIDs, detailNames, detailValues, product);
-			
+		
+		List<Unavailability> allUnavailableTermins = unavailabilityService.listAll();
+		for (int i = 0; i < unavailabilityStartDate.length; i++) {
+			if (unavailabilityStartDate[i] != null && unavailabilityEndDate[i] != null) {
+				Unavailability newUnavailibility = new Unavailability(unavailabilityStartDate[i], unavailabilityEndDate[i]);
+				Unavailability fromDatabase = unavailabilityService.findByDates(unavailabilityStartDate[i], unavailabilityEndDate[i]);
+				if (fromDatabase == null) {
+					Unavailability savedUnavailability = unavailabilityService.addUnavailability(newUnavailibility);
+					product.addUnavailability(savedUnavailability);
+				}
+			}
+		}
+		
+		//ProductSaveHelper.setProductUnavailabilities(unavailabilityIDs, unavailabilityStartDate, unavailabilityEndDate, product);
 		Product savedProduct = productService.save(product, loggedUser);
 		
 		ProductSaveHelper.saveUploadedImages(mainImageMultipart, extraImageMultiparts, savedProduct);
@@ -173,12 +200,15 @@ public class ProductController {
 			}
 			isReadOnlyForSalesperson = false;
 			
+			List<City> listCities = cityService.listAll();
+			
 			model.addAttribute("isReadOnlyForSalesperson", isReadOnlyForSalesperson);
 			model.addAttribute("isLoggedUserAdmin", isLoggedUserAdmin);
 			model.addAttribute("product", product);
 			model.addAttribute("listBrands", listBrands);
 			model.addAttribute("pageTitle", "Edit Product (ID: " + id + ")");
 			model.addAttribute("numberOfExistingExtraImages", numberOfExistingExtraImages);
+			model.addAttribute("listCities", listCities);
 			
 			return "products/product_form";
 			

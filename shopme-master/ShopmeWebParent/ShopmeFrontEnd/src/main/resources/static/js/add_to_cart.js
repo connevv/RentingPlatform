@@ -16,8 +16,8 @@ function addToCart() {
 			xhr.setRequestHeader(csrfHeaderName, csrfValue);
 		}
 	}).done(function(response) {
-		showModalDialog("Shopping Cart", response);
+		showModalDialog("Количка", response);
 	}).fail(function() {
-		showErrorModal("Error while adding product to shopping cart.");
+		showErrorModal("Грешка при добавяне на продукт в количката.");
 	});
 }

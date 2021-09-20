@@ -176,7 +176,7 @@ public class Order extends IdBasedEntity {
 	}
 	
 	@Transient
-	public String getProductNames() {
+	public String getProductName() {
 		return "<ul><li>" + product.getShortName() + "</li></ul>";
 	}
 }

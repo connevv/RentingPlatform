@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.shopme.common.entity.setting.Setting;
 import com.shopme.common.entity.setting.SettingCategory;
+import com.shopme.common.entity.setting.EmailSettingBag;
 
 @Service
 public class SettingService {
@@ -30,5 +31,12 @@ public class SettingService {
 	
 	public List<Setting> getPaymentSettings() {
 		return repo.findByCategory(SettingCategory.PAYMENT);
-	}	
+	}
+	
+	public EmailSettingBag getEmailSettings() {
+		List<Setting> settings = repo.findByCategory(SettingCategory.MAIL_SERVER);
+		settings.addAll(repo.findByCategory(SettingCategory.MAIL_TEMPLATES));
+		
+		return new EmailSettingBag(settings);
+	}
 }

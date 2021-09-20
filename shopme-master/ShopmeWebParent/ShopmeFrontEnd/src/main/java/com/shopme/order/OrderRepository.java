@@ -19,4 +19,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 	public Page<Order> findAll(Integer customerId, Pageable pageable);
 	
 	public Order findByIdAndCustomer(Integer id, Customer customer);
+	
+	public Long countById(Integer id);
 }

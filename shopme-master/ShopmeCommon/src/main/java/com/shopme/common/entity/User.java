@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -33,6 +34,10 @@ public class User extends IdBasedEntity {
 	
 	@Column(name = "phone_number", nullable = false, length = 15)
 	protected String phoneNumber;
+	
+	@ManyToOne
+	@JoinColumn(name = "city_id")
+	private City city;
 	
 	@Column(name = "votes_up", columnDefinition="default '0'")
 	private int votesUp;
@@ -145,6 +150,14 @@ public class User extends IdBasedEntity {
 
 	public void setVotesDown(int votesDown) {
 		this.votesDown = votesDown;
+	}
+
+	public City getCity() {
+		return city;
+	}
+
+	public void setCity(City city) {
+		this.city = city;
 	}
 
 	@Override

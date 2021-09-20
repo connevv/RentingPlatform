@@ -15,6 +15,7 @@ import com.shopme.Utility;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.User;
 import com.shopme.common.entity.product.Product;
+import com.shopme.common.exception.CustomerNotFoundException;
 import com.shopme.common.exception.ProductNotFoundException;
 import com.shopme.customer.CustomerService;
 
@@ -76,6 +77,19 @@ public class UserController {
 		customerService.update(customer);
 		
 		return "redirect:/user/" + userId;
+	}
+	
+	@GetMapping("/users/detail/{id}")
+	public String viewCustomer(@PathVariable("id") Integer id, Model model, RedirectAttributes ra) throws UserNotFoundException {
+		try {
+			User user = userService.getById(id);
+			model.addAttribute("user", user);
+			
+			return "user/user_detail_modal";
+		} catch (UserNotFoundException ex) {
+			ra.addFlashAttribute("message", ex.getMessage());
+			return defaultRedirectURL;		
+		}
 	}
 	
 	private Customer getAuthenticatedCustomer(HttpServletRequest request) {

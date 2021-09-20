@@ -29,10 +29,10 @@
 		
 <div th:fragment="pagination(moduleURL, entityName)" th:remove="tag">
 	<div class="text-center m-1" th:if="${totalItems > 0}">
-		<span>Showing [[${entityName}]] # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+		<span>Показване [[${entityName}]] # [[${startCount}]] до [[${endCount}]] от [[${totalItems}]]</span>
 	</div>
 	<div class="text-center m-1" th:unless="${totalItems > 0}">
-		<span>No [[${entityName}]] found</span>
+		<span>Не са намерени [[${entityName}]]</span>
 	</div>
 	
 	<div th:if="${totalPages > 1}">
@@ -66,7 +66,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" id="modalTitle">Warning</h4>
+				<h4 class="modal-title" id="modalTitle">Внимание</h4>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			
@@ -75,7 +75,7 @@
 			</div>
 			
 			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">Затвори</button>
 			</div>
 		</div>
 	</div>
@@ -85,7 +85,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title">Delete Confirmation</h4>
+				<h4 class="modal-title">Потвърждение за изтриване</h4>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			
@@ -94,8 +94,8 @@
 			</div>
 			
 			<div class="modal-footer">
-				<a class="btn btn-success" href="" id="yesButton">Yes</a>
-				<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+				<a class="btn btn-success" href="" id="yesButton">Да</a>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">Не</button>
 			</div>
 		</div>
 	</div>
@@ -141,23 +141,45 @@
 		<h5 class="col-sm-10">[[${message}]]</h5>
 </div>
 
-<div th:fragment="comment_section(entityUrl)" th:remove="tag">
-		<h3>Add comment:</h3>
+<div th:fragment="comment_section_customer(entityUrl)" th:remove="tag">
+		<h3>Добави коментар:</h3>
 		<form th:action="@{${entityUrl}}" method="post" style="max-width: 500px; margin: 0 auto"
 		enctype="multipart/form-data"
 		th:object="${comment}">
 		<input type="hidden" name="productId" th:value="${product.id}" />
 		<div class="border border-secondary rounded p-3">
 		<div class="form-group row">
-			<label class="col-sm-4 col-form-label">Please enter your comment here:</label>
+			<label class="col-sm-4 col-form-label">Моля, въведете коментара си тук:</label>
 			<div class="col-sm-8">
 				<input type="text" class="form-control" th:field="*{name}" required minlength="3" maxlength="128"  />
 			</div>
 		</div>
 		
 		<div class="text-center">
-			<input type="submit" value="Save" class="btn btn-primary m-3" />
+			<input type="submit" value="Запази" class="btn btn-primary m-3" />
 		</div>
+		</div>
+	</form>
+</div>
+
+<div th:fragment="comment_section_visitor(entityUrl, message)" th:remove="tag">
+		<h3>Добави коментар:</h3>
+		<form th:action="@{${entityUrl}}" method="post" style="max-width: 500px; margin: 0 auto"
+		enctype="multipart/form-data"
+		th:object="${comment}">
+		<input type="hidden" name="productId" th:value="${product.id}" />
+		<div class="border border-secondary rounded p-3">
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">Моля, въведете коментара си тук:</label>
+			<div class="col-sm-8">
+				<input type="text" class="form-control" th:field="*{name}" required minlength="3" maxlength="128" disabled  />
+			</div>
+		</div>
+		
+		<div class="text-center">
+			<input type="submit" value="Запази" class="btn btn-primary m-3" disabled/>
+		</div>
+		<h5 class="col-sm-10 text-center">[[${message}]]</h5>	
 		</div>
 	</form>
 </div>
@@ -174,16 +196,18 @@
 
 
 <div th:fragment="see_product_comments(entityUrl)" th:remove="tag">
+		<div><hr/></div>
 		<a class="fas fa-comments fa-2x mt-10"
 			th:href="@{${entityUrl}}"
 			th:title="'Add positive review'"
-			>See product comments</a>
+			>Вижте коментарите за продуктa</a>
 </div>
 
 <div th:fragment="see_product_renter_info(entityUrl, renterName)" th:remove="tag">
 		<div>
+			<div><hr/></div>
 			<div>
-				<h4>Наемател: </h4>
+				<h3>Наемател: </h3>
 			</div>
 			<a class="fas fa-male fa-2x mt-10"
 				th:href="@{${entityUrl}}"

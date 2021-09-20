@@ -1,9 +1,6 @@
-package com.shopme.setting;
+package com.shopme.common.entity.setting;
 
 import java.util.List;
-
-import com.shopme.common.entity.setting.Setting;
-import com.shopme.common.entity.setting.SettingBag;
 
 public class EmailSettingBag extends SettingBag {
 

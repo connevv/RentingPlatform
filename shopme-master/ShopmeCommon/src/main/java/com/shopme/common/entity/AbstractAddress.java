@@ -1,6 +1,8 @@
 package com.shopme.common.entity;
 
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
@@ -21,8 +23,9 @@ public abstract class AbstractAddress extends IdBasedEntity {
 	@Column(name = "address_line_2", length = 64)
 	protected String addressLine2;
 	
-	@Column(nullable = false, length = 45)
-	protected String city;
+	@ManyToOne
+	@JoinColumn(name = "city_id")
+	private City city;
 	
 	@Column(name = "postal_code", nullable = false, length = 10)
 	protected String postalCode;
@@ -67,14 +70,6 @@ public abstract class AbstractAddress extends IdBasedEntity {
 		this.addressLine2 = addressLine2;
 	}
 
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
 	public String getPostalCode() {
 		return postalCode;
 	}
@@ -83,6 +78,14 @@ public abstract class AbstractAddress extends IdBasedEntity {
 		this.postalCode = postalCode;
 	}
 	
+	public City getCity() {
+		return city;
+	}
+
+	public void setCity(City city) {
+		this.city = city;
+	}
+
 	@Override
 	public String toString() {
 		String address = firstName;
@@ -93,7 +96,7 @@ public abstract class AbstractAddress extends IdBasedEntity {
 		
 		if (addressLine2 != null && !addressLine2.isEmpty()) address += ", " + addressLine2;
 		
-		if (!city.isEmpty()) address += ", " + city;
+		if (!city.getName().isEmpty()) address += ", " + city.getName();
 		
 		address += ", " + "Bulgaria";
 		

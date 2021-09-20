@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.Rollback;
 
 import com.shopme.common.entity.AuthenticationType;
+import com.shopme.common.entity.City;
 import com.shopme.common.entity.Customer;
 
 @DataJpaTest
@@ -33,7 +34,7 @@ public class CustomerRepositoryTests {
 		customer.setEmail("david.s.fountaine@gmail.com");
 		customer.setPhoneNumber("312-462-7518");
 		customer.setAddressLine1("1927  West Drive");
-		customer.setCity("Sacramento");
+		customer.setCity(new City("Sacramento"));
 		customer.setPostalCode("95867");
 		customer.setCreatedTime(new Date());
 		
@@ -55,7 +56,7 @@ public class CustomerRepositoryTests {
 		customer.setPhoneNumber("02224928052");
 		customer.setAddressLine1("173 , A-, Shah & Nahar Indl.estate, Sunmill Road");
 		customer.setAddressLine2("Dhanraj Mill Compound, Lower Parel (west)");
-		customer.setCity("Mumbai");
+		customer.setCity(new City("Mumbai"));
 		customer.setPostalCode("400013");
 		customer.setCreatedTime(new Date());
 		

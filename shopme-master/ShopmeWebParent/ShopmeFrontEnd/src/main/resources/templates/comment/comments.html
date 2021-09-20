@@ -14,17 +14,17 @@
 				<tr>
 					<th><a class="text-white"
 						th:href="@{'/p/' + ${productAlias} + '/comments/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}">
-					ID
+					Идентификационнен номер
 					</a>								
 					<th>
-					User Name
+					Потребителско име
 					</th>							
 					<th>
-					Comment
+					Коментар
 					</th>								
 					<th><a class="text-white"
 						th:href="@{'/p/' + ${productAlias} + '/comments/page/' + ${currentPage} + '?sortField=date&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">
-					Date
+					Дата
 					</a>								
 					<span th:if="${sortField == fieldName}"
 					th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>
@@ -46,8 +46,8 @@
 	
 	<div th:replace="fragments :: pagination('/p/' + ${productAlias} + '/comments', 'comments')"></div>
 	
-	<!-- <div th:replace="fragments :: footer"></div> 
-	<div th:replace="modal_fragments :: confirm_modal" /> -->
+	<div th:replace="navigation :: footer_menu"></div> 
+	
 	
 </div>
 <script th:src="@{/js/common_list.js}"></script>

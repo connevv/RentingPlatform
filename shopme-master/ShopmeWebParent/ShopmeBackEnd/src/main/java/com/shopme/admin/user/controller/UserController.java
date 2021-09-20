@@ -56,7 +56,7 @@ public class UserController {
 		
 		model.addAttribute("user", user);
 		model.addAttribute("listRoles", listRoles);
-		model.addAttribute("pageTitle", "Create New User");
+		model.addAttribute("pageTitle", "Създаване на нов потребител");
 		
 		return "users/user_form";
 	}
@@ -64,6 +64,8 @@ public class UserController {
 	@PostMapping("/users/save")
 	public String saveUser(User user, RedirectAttributes redirectAttributes,
 			@RequestParam("image") MultipartFile multipartFile) throws IOException {
+		user.setVotesDown(0);
+		user.setVotesUp(0);
 		
 		if (!multipartFile.isEmpty()) {
 			String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());

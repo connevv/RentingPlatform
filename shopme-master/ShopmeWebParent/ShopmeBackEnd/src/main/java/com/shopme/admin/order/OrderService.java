@@ -61,7 +61,7 @@ public class OrderService {
 	public void delete(Integer id) throws OrderNotFoundException {
 		Long count = orderRepo.countById(id);
 		if (count == null || count == 0) {
-			throw new OrderNotFoundException("Could not find any orders with ID " + id); 
+			throw new OrderNotFoundException("Поръчка с номер" + id + "не може да бъде намерена"); 
 		}
 		
 		orderRepo.deleteById(id);
@@ -80,16 +80,6 @@ public class OrderService {
 		OrderStatus statusToUpdate = OrderStatus.valueOf(status);
 		
 		if (!orderInDB.hasStatus(statusToUpdate)) {
-			//List<OrderTrack> orderTracks = orderInDB.getOrderTracks();
-			
-			OrderTrack track = new OrderTrack();
-			track.setOrder(orderInDB);
-			track.setStatus(statusToUpdate);
-			track.setUpdatedTime(new Date());
-			track.setNotes(statusToUpdate.defaultDescription());
-			
-			//orderTracks.add(track);
-			
 			orderInDB.setStatus(statusToUpdate);
 			
 			orderRepo.save(orderInDB);

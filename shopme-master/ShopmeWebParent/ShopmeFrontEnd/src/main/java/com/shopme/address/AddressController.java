@@ -13,32 +13,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shopme.Utility;
+import com.shopme.city.CityService;
 import com.shopme.common.entity.Address;
+import com.shopme.common.entity.City;
 import com.shopme.common.entity.Customer;
 import com.shopme.customer.CustomerService;
 
 @Controller
 public class AddressController {
-
-	@Autowired private AddressService addressService;
-	@Autowired private CustomerService customerService;	
+	@Autowired private CustomerService customerService;
 	
 	@GetMapping("/address_book")
 	public String showAddressBook(Model model, HttpServletRequest request) {
 		Customer customer = getAuthenticatedCustomer(request);
-		List<Address> listAddresses = addressService.listAddressBook(customer);
-		
-		boolean usePrimaryAddressAsDefault = true;
-		for (Address address : listAddresses) {
-			if (address.isDefaultForShipping()) {
-				usePrimaryAddressAsDefault = false;
-				break;
-			}
-		}
-		
-		model.addAttribute("listAddresses", listAddresses);
+
 		model.addAttribute("customer", customer);
-		model.addAttribute("usePrimaryAddressAsDefault", usePrimaryAddressAsDefault);
+		model.addAttribute("usePrimaryAddressAsDefault", true);
 		
 		return "address_book/addresses";
 	}
@@ -48,13 +38,13 @@ public class AddressController {
 		return customerService.getCustomerByEmail(email);
 	}		
 	
-	@GetMapping("/address_book/new")
-	public String newAddress(Model model) {
-		//List<Country> listCountries = customerService.listAllCountries();
+	/*@GetMapping("/address_book/new")
+	public String newAddress(Model model) {	
+		List<City> listCities = cityService.listAll();
 		
-		//model.addAttribute("listCountries", listCountries);
 		model.addAttribute("address", new Address());
 		model.addAttribute("pageTitle", "Add New Address");
+		model.addAttribute("listCities", listCities);
 		
 		return "address_book/address_form";
 	}
@@ -120,5 +110,5 @@ public class AddressController {
 		}
 		
 		return redirectURL; 
-	}
+	}*/
 }

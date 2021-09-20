@@ -1,8 +1,6 @@
 package com.shopme.shoppingcart;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -26,12 +24,12 @@ public class ShoppingCartService {
 			throws ShoppingCartException {
 		Optional<Product> product = productRepo.findById(productId);
 		
-		CartItem cartItem = cartRepo.findByCustomerAndProduct(customer, product.get());
+		CartItem cartItem = cartRepo.findByCustomer(customer);
 		
-		if (cartItem != null) {			
-			throw new ShoppingCartException("Could not add more item(s)"
-						+ " because there's already 1 item"
-						+ "in your shopping cart. Maximum allowed quantity is 1.");
+		if (cartItem != null) {		
+			throw new ShoppingCartException("Не може да добавиш повече продукти"
+						+ " защото вече има 1 артикул във вашата кошница."
+						+ " Максимално допустимото количество е 1.");
 		} else {
 			cartItem = new CartItem();
 			cartItem.setCustomer(customer);
@@ -48,17 +46,6 @@ public class ShoppingCartService {
 	public CartItem listCartItem(Customer customer) {
 		return cartRepo.findByCustomer(customer);
 	}
-	
-	/*public float updateQuantity(Integer productId, Integer quantity, Integer daysQuantity, Customer customer) {
-		cartRepo.updateQuantity(quantity, customer.getId(), productId);
-		cartRepo.updateDaysQuantity(daysQuantity, customer.getId(), productId);
-		
-		Product product = productRepo.findById(productId).get();
-		
-		float subtotal = product.getDiscountPrice() * daysQuantity * quantity;
-		
-		return subtotal;
-	}*/
 	
 	public void removeProduct(Integer productId, Customer customer) {
 		cartRepo.deleteByCustomerAndProduct(customer.getId(), productId);

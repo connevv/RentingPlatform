@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 
 import com.shopme.admin.customer.CustomerRepository;
+import com.shopme.common.entity.City;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
@@ -62,7 +63,7 @@ public class UserRepositoryTests {
 	public void testCreateNewCustomer() {
 		Customer customer = new Customer();
 		customer.setAddressLine1("testAdd1");
-		customer.setCity("delcevo");
+		customer.setCity(new City("delcevo"));
 
 		Customer savedCustomer = customerRepo.save(customer);
 		assertThat(savedCustomer.getId()).isGreaterThan(0);

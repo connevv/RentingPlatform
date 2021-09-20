@@ -138,4 +138,6 @@ public class Customer extends AbstractAddress {
 	public void setUsers(Set<User> users) {
 		this.users = users;
 	}
+	
+	
 }

@@ -33,15 +33,15 @@
 				<h2>[[${product.name}]]</h2>
 			</div>
 			<div>
-				<span>Brand: [[${product.brand.name}]]</span>
+				<span>Марка: [[${product.brand.name}]]</span>
 			</div>
 			<div>
-				List Price:
+				Цена:
 				<span th:if="${product.discountPercent <= 0}">$ [[${product.price}]]</span>
 				<del th:if="${product.discountPercent >0}"><span>$ [[${product.price}]]</span></del>
 			</div>
 			<div th:if="${product.discountPercent > 0}">
-				Price:
+				Цена:
 				<span style="font-size: lagrer; color:darkred">$ [[${product.discountPrice}]]</span>
 				([[${product.discountPercent}]] % off)
 			</div>
@@ -91,7 +91,7 @@
 		<div class="col-12">
 			<div><hr/></div>
 			<div>
-				<h3>Product Description:</h3>
+				<h3>Описание на продукта:</h3>
 			</div>
 			<div th:utext="${product.fullDescription}"></div>
 		</div>
@@ -101,7 +101,7 @@
 		<div class="col-12">
 			<div><hr/></div>
 			<div>
-				<h3>Product Details:</h3>
+				<h3>Информация за продукта:</h3>
 			</div>
 			<th:block th:each="detail : ${product.details}">
 			<div>
@@ -115,7 +115,12 @@
 	<br>
 	<div th:replace="fragments :: see_product_comments('/p/' + ${product.alias} + '/comments')"></div>
 	<br></br>
-	<div th:replace="fragments :: comment_section('/p/' + ${product.alias} + '/comment/save')">
+	<th:block th:if="${canBeCommented}">
+		<div th:replace="fragments :: comment_section_customer('/p/' + ${product.alias} + '/comment/save')">
+	</th:block>
+	<th:block th:unless="${canBeCommented}">
+		<div th:replace="fragments :: comment_section_visitor('/p/' + ${product.alias} + '/comment/save', ${commentMessage})">
+	</th:block>
 	
 	</div>
 	<div th:replace="product/images_carousel :: content"></div>

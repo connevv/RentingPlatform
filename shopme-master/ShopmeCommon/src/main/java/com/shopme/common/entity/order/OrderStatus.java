@@ -5,7 +5,7 @@ public enum OrderStatus {
 	PENDING {
 		@Override
 		public String defaultDescription() {
-			return "Order was placed by the customer and is waiting for approval from the renter";
+			return "Поръчката е направена от клиента и чака одобрение от наемателя";
 		}
 		
 	}, 
@@ -13,14 +13,14 @@ public enum OrderStatus {
 	CANCELLED {
 		@Override
 		public String defaultDescription() {
-			return "Order was rejected";
+			return "Поръчката е отхвърлена";
 		}
 	}, 
 	
 	APPROVED {
 		@Override
 		public String defaultDescription() {
-			return "Order is approved by the renter";
+			return "Поръчката е одобрена от наемателя";
 		}
 	};
 

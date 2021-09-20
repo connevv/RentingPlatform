@@ -11,6 +11,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -21,6 +23,7 @@ import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Category;
 import com.shopme.common.entity.City;
 import com.shopme.common.entity.IdBasedEntity;
+import com.shopme.common.entity.Unavailability;
 import com.shopme.common.entity.User;
 
 @Entity
@@ -82,6 +85,14 @@ public class Product extends IdBasedEntity {
 	
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductDetail> details = new ArrayList<>();
+	
+	@ManyToMany
+	@JoinTable(
+			name = "products_unavailability",
+			joinColumns = @JoinColumn(name = "product_id"),
+			inverseJoinColumns = @JoinColumn(name = "unavailability_id")
+			)
+	private Set<Unavailability> unavailabilities = new HashSet<>();
 
 	public Product(Integer id) {
 		this.id = id;
@@ -210,6 +221,14 @@ public class Product extends IdBasedEntity {
 		this.votesDown = votesDown;
 	}
 
+	public Set<Unavailability> getUnavailabilities() {
+		return unavailabilities;
+	}
+
+	public void setUnavailabilities(Set<Unavailability> unavailabilities) {
+		this.unavailabilities = unavailabilities;
+	}
+
 	@Override
 	public String toString() {
 		return "Product [id=" + id + ", name=" + name + "]";
@@ -256,6 +275,14 @@ public class Product extends IdBasedEntity {
 
 	public void addDetail(Integer id, String name, String value) {
 		this.details.add(new ProductDetail(id, name, value, this));
+	}
+	
+	public void addUnavailability(Date startDate, Date endDate) {
+		this.unavailabilities.add(new Unavailability(startDate, endDate));
+	}
+	
+	public void addUnavailability(Unavailability unavailability) {
+		this.unavailabilities.add(unavailability);
 	}
 	
 	public boolean containsImageName(String imageName) {

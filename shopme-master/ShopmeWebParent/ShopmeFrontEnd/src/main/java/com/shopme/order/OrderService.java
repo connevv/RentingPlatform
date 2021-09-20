@@ -16,6 +16,7 @@ import com.shopme.common.entity.order.Order;
 import com.shopme.common.entity.order.OrderStatus;
 import com.shopme.common.entity.order.PaymentMethod;
 import com.shopme.common.entity.product.Product;
+import com.shopme.common.exception.OrderNotFoundException;
 
 @Service
 public class OrderService {
@@ -54,5 +55,14 @@ public class OrderService {
 	
 	public Order getOrder(Integer id, Customer customer) {
 		return repo.findByIdAndCustomer(id, customer);
+	}
+	
+	public void delete(Integer id) throws OrderNotFoundException {
+		Long count = repo.countById(id);
+		if (count == null || count == 0) {
+			throw new OrderNotFoundException("Поръчка с номер" + id + "не може да бъде намерена"); 
+		}
+		
+		repo.deleteById(id);
 	}
 }
